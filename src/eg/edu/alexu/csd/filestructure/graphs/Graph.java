@@ -8,6 +8,8 @@ package eg.edu.alexu.csd.filestructure.graphs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +21,7 @@ import javax.management.RuntimeErrorException;
  * @author arabtech
  */
 public class Graph implements IGraph {
+	private ArrayList<Integer> dijkstraNodes=new ArrayList<>();
 
 	private class Edge {
 
@@ -28,6 +31,13 @@ public class Graph implements IGraph {
 			this.s = s;
 			this.d = d;
 			this.w = w;
+		}
+	}
+	private class Pair{
+		int first,second;
+		public Pair(int first,int second) {
+			this.first=first;
+			this.second=second;
 		}
 	}
 
@@ -99,14 +109,42 @@ public class Graph implements IGraph {
 
 	@Override
 	public void runDijkstra(int src, int[] distances) {
-		throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
-																		// Tools | Templates.
+		PriorityQueue<Pair> pq=new PriorityQueue<>((a,b)->a.second-b.second);
+        pq.add(new Pair(src,0));
+        Arrays.fill(distances, INF);
+        distances[src]=0;
+        boolean[] visited=new boolean[v];
+        while(!pq.isEmpty()){
+            Pair p=pq.remove();
+            int node=(int) p.first;
+            int val=(int) p.second;
+            visited[node]=true;
+            if(distances[node]<val){
+                continue;
+            }
+            dijkstraNodes.add(node);
+            ArrayList<Integer> neighbours=getNeighbors(node);
+            for(int i=0;i<neighbours.size();i++){
+                if(visited[neighbours.get(i)]){
+                    continue;
+                }
+                for(int j=0;j<e;j++) {
+                	if(edges.get(j).s==src && edges.get(j).d==neighbours.get(i)) {
+                		if(distances[node]+edges.get(j).w<distances[neighbours.get(i)]){
+                    }
+                    distances[neighbours.get(i)]=Math.min(distances[neighbours.get(i)], distances[node]+edges.get(j).w);
+                    pq.add(new Pair(neighbours.get(i),distances[neighbours.get(i)]));
+                	}
+                }
+                
+            }
+        }
+        
 	}
 
 	@Override
 	public ArrayList<Integer> getDijkstraProcessedOrder() {
-		throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
-																		// Tools | Templates.
+		return dijkstraNodes;
 	}
 
 	@Override
