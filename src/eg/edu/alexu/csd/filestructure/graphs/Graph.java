@@ -147,8 +147,8 @@ public class Graph implements IGraph {
         }*/
 		PriorityQueue<Pair> pq=new PriorityQueue<>((a,b)->a.second-b.second);
 		pq.add(new Pair(src,0));
-        distances[src]=0;
         Arrays.fill(distances, INF);
+        distances[src]=0;
         boolean[] visited=new boolean[v];
         while(!pq.isEmpty()){
             Pair p=pq.remove();
