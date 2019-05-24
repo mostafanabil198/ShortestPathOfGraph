@@ -23,7 +23,7 @@ import javax.management.RuntimeErrorException;
 public class Graph implements IGraph {
 	private ArrayList<Integer> dijkstraNodes=new ArrayList<>();
 	private ArrayList<Pair> adj[];
-
+    private int[] dijkstraDistance;
 	private class Edge {
 
 		int s, d, w;
@@ -47,6 +47,7 @@ public class Graph implements IGraph {
 		e = 0;
 		edges = new ArrayList<>();
 		vertices = new ArrayList<>();
+		dijkstraDistance=new int[v];
 	}
 
 	private int v, e;
@@ -149,28 +150,33 @@ public class Graph implements IGraph {
 		pq.add(new Pair(src,0));
         Arrays.fill(distances, INF);
         distances[src]=0;
-        boolean[] visited=new boolean[v];
         while(!pq.isEmpty()){
             Pair p=pq.remove();
             int node=(int) p.first;
             int val=(int) p.second;
-            visited[node]=true;
-            if(distances[node]<val){
-                continue;
-            }
             dijkstraNodes.add(node);
             for(int i=0;i<adj[node].size();i++){
-                if(visited[adj[node].get(i).first]){
-                    continue;
+                if(distances[adj[node].get(i).first]>distances[node]+adj[node].get(i).second) {
+                   distances[adj[node].get(i).first]=distances[node]+adj[node].get(i).second;
+                   pq.add(new Pair(adj[node].get(i).first,distances[adj[node].get(i).first]));
                 }
-                distances[adj[node].get(i).first]=Math.min(distances[adj[node].get(i).first], distances[node]+adj[node].get(i).second);
-                pq.add(new Pair(adj[node].get(i).first,distances[adj[node].get(i).first]));
             }
         }
+        dijkstraDistance=distances;
 	}
 
 	@Override
 	public ArrayList<Integer> getDijkstraProcessedOrder() {
+		int first = dijkstraDistance[0];
+		for (int i = 0; i < v; i++) {
+			for (int j = 0; j < v; j++) {
+				if (first > dijkstraDistance[j]) {
+					first = dijkstraDistance[j];
+					dijkstraNodes.add(j);
+					dijkstraDistance[j] = (Integer.MAX_VALUE) / 2;
+				}
+			}
+		}
 		return dijkstraNodes;
 	}
 
