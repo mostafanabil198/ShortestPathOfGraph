@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.management.RuntimeErrorException;
 
@@ -56,6 +54,7 @@ public class Graph implements IGraph {
 	private Scanner scan;
 	private final int INF = Integer.MAX_VALUE / 2;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void readGraph(File file) {
 		try {
@@ -116,36 +115,6 @@ public class Graph implements IGraph {
 
 	@Override
 	public void runDijkstra(int src, int[] distances) {
-		/*PriorityQueue<Pair> pq=new PriorityQueue<>((a,b)->a.second-b.second);
-        pq.add(new Pair(src,0));
-        Arrays.fill(distances, INF);
-        distances[src]=0;
-        boolean[] visited=new boolean[v];
-        while(!pq.isEmpty()){
-            Pair p=pq.remove();
-            int node=(int) p.first;
-            int val=(int) p.second;
-            visited[node]=true;
-            if(distances[node]<val){
-                continue;
-            }
-            dijkstraNodes.add(node);
-            ArrayList<Integer> neighbours=getNeighbors(node);
-            for(int i=0;i<neighbours.size();i++){
-                if(visited[neighbours.get(i)]){
-                    continue;
-                }
-                for(int j=0;j<e;j++) {
-                	if(edges.get(j).s==src && edges.get(j).d==neighbours.get(i)) {
-                		if(distances[node]+edges.get(j).w<distances[neighbours.get(i)]){
-                    }
-                    distances[neighbours.get(i)]=Math.min(distances[neighbours.get(i)], distances[node]+edges.get(j).w);
-                    pq.add(new Pair(neighbours.get(i),distances[neighbours.get(i)]));
-                	}
-                }
-                
-            }
-        }*/
 		PriorityQueue<Pair> pq=new PriorityQueue<>((a,b)->a.second-b.second);
 		pq.add(new Pair(src,0));
         Arrays.fill(distances, INF);
@@ -153,7 +122,6 @@ public class Graph implements IGraph {
         while(!pq.isEmpty()){
             Pair p=pq.remove();
             int node=(int) p.first;
-            int val=(int) p.second;
             dijkstraNodes.add(node);
             for(int i=0;i<adj[node].size();i++){
                 if(distances[adj[node].get(i).first]>distances[node]+adj[node].get(i).second) {
@@ -173,7 +141,7 @@ public class Graph implements IGraph {
 				if (first > dijkstraDistance[j]) {
 					first = dijkstraDistance[j];
 					dijkstraNodes.add(j);
-					dijkstraDistance[j] = (Integer.MAX_VALUE) / 2;
+					dijkstraDistance[j] = INF;
 				}
 			}
 		}
