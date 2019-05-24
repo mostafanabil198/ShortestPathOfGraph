@@ -22,6 +22,7 @@ import javax.management.RuntimeErrorException;
  */
 public class Graph implements IGraph {
 	private ArrayList<Integer> dijkstraNodes=new ArrayList<>();
+	private ArrayList<Pair> adj[];
 
 	private class Edge {
 
@@ -67,12 +68,17 @@ public class Graph implements IGraph {
 			for (int i = 0; i < v; i++) {
 				vertices.add(i);
 			}
+			adj = new ArrayList[v];
+            for (int i = 0; i < v; i++) {
+                adj[i] = new ArrayList<Pair>();
+            }
 			for (int i = 0; i < e; i++) {
 				String[] line;
 				line = scan.nextLine().split(" ");
 				int s = Integer.parseInt(line[0]);
 				int d = Integer.parseInt(line[1]);
 				int w = Integer.parseInt(line[2]);
+				adj[s].add(new Pair(d, w));
 				Edge edge = new Edge(s, d, w);
 				edges.add(edge);
 			}
@@ -109,7 +115,7 @@ public class Graph implements IGraph {
 
 	@Override
 	public void runDijkstra(int src, int[] distances) {
-		PriorityQueue<Pair> pq=new PriorityQueue<>((a,b)->a.second-b.second);
+		/*PriorityQueue<Pair> pq=new PriorityQueue<>((a,b)->a.second-b.second);
         pq.add(new Pair(src,0));
         Arrays.fill(distances, INF);
         distances[src]=0;
@@ -138,8 +144,29 @@ public class Graph implements IGraph {
                 }
                 
             }
+        }*/
+		PriorityQueue<Pair> pq=new PriorityQueue<>((a,b)->a.second-b.second);
+		pq.add(new Pair(src,0));
+        distances[src]=0;
+        Arrays.fill(distances, INF);
+        boolean[] visited=new boolean[v];
+        while(!pq.isEmpty()){
+            Pair p=pq.remove();
+            int node=(int) p.first;
+            int val=(int) p.second;
+            visited[node]=true;
+            if(distances[node]<val){
+                continue;
+            }
+            dijkstraNodes.add(node);
+            for(int i=0;i<adj[node].size();i++){
+                if(visited[adj[node].get(i).first]){
+                    continue;
+                }
+                distances[adj[node].get(i).first]=Math.min(distances[adj[node].get(i).first], distances[node]+adj[node].get(i).second);
+                pq.add(new Pair(adj[node].get(i).first,distances[adj[node].get(i).first]));
+            }
         }
-        
 	}
 
 	@Override
